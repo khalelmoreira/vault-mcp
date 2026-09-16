@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+
+# Node (Claude Code CLI installs into the devcontainer's global npm, but just in case)
+node_modules/
+
+# Editor / OS noise
+.DS_Store
+
+# The vault is the whole point of this project (your actual project memory).
+# Decide deliberately whether you want it in git history:
+#   - keep it tracked (comment the line below) if you want versioned memory
+#   - ignore the content but keep the folder (current default) if it's
+#     meant to stay local/private per machine
+vault/*.md
+!vault/example.md

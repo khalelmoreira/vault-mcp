@@ -1,0 +1,8 @@
+{
+  "python.defaultInterpreterPath": "/usr/local/bin/python",
+  "editor.formatOnSave": true,
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/*.pyc": true
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "name": "project-vault-mcp",
+  "build": {
+    "context": "..",
+    "dockerfile": "../Dockerfile"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "remoteUser": "dev",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/home/dev/workspace/project-vault-mcp,type=bind,consistency=cached",
+  "workspaceFolder": "/home/dev/workspace/project-vault-mcp",
+  "containerEnv": {
+    "CLAUDE_CONFIG_DIR": "/home/dev/.claude"
+  },
+  "mounts": [
+    "source=project-vault-mcp-claude-config,target=/home/dev/.claude,type=volume",
+    "source=project-vault-mcp-gh-config,target=/home/dev/.config/gh,type=volume"
+  ],
+  "postCreateCommand": "sudo mkdir -p /home/dev/.claude /home/dev/.config/gh && sudo chown -R dev:dev /home/dev/.claude /home/dev/.config/gh && [ -f /home/dev/.claude/settings.json ] || echo '{\"sandbox\": {\"enabled\": false}}' > /home/dev/.claude/settings.json && npm install -g @anthropic-ai/claude-code && claude mcp add project-vault -- python src/server.py",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-azuretools.vscode-docker"
+      ]
+    }
+  }
+}
