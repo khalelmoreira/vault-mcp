@@ -26,14 +26,15 @@ chat client (any MCP-capable AI) --MCP--> src/server.py --reads/writes--> vaults
   to register. Plain Markdown files, one per key, with a small YAML
   frontmatter block (see `vaults/project-vault-mcp/example.md`).
 - `src/server.py` — one long-running stdio MCP server exposing
-  `list_projects`, `list_memory`, `get_memory`, `set_memory`.
-  `list_memory`/`get_memory`/`set_memory` all take an optional `project`
-  argument, defaulting to `project-vault-mcp` itself. No filtering or
-  summarizing — a thin, honest pass-through. That's intentional for v0:
-  prove the plumbing before adding intelligence in front of it.
+  `list_projects`, `create_project`, `list_memory`, `get_memory`,
+  `set_memory`. `list_memory`/`get_memory`/`set_memory` all take an
+  optional `project` argument, defaulting to `project-vault-mcp` itself.
+  `create_project` makes a new, empty `vaults/<project>/` folder on
+  request; project names must start with `project` (e.g. `project-foo`).
+  No filtering or summarizing — a thin, honest pass-through. That's
+  intentional for v0: prove the plumbing before adding intelligence in
+  front of it.
 - No second LLM in front of the vault yet — see open questions below.
-- No tool yet to create a new project's folder on request — for now,
-  `mkdir vaults/<project>/` yourself. Planned next step.
 
 ## Repo layout
 

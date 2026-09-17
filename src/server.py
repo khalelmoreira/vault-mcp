@@ -2,8 +2,9 @@
 project-vault MCP server — v0 (simplest possible version)
 
 One long-running server, run from this repo, exposing every project's
-memory under `vaults/<project>/*.md` through four MCP tools:
+memory under `vaults/<project>/*.md` through five MCP tools:
   - list_projects
+  - create_project
   - list_memory
   - get_memory
   - set_memory
@@ -17,9 +18,9 @@ a real chat client (Claude Desktop, Claude Code, claude.ai via a remote
 variant, etc.) calling out over MCP to read/write files that live entirely
 outside its own memory store.
 
-Projects are just subfolders of `vaults/` — nothing to register. Create
-`vaults/project1/` yourself (a future tool will do this on request instead)
-and it immediately shows up in `list_projects()`; `list_memory`/`get_memory`/
+Projects are just subfolders of `vaults/` — nothing to register. Call
+`create_project("project1")` (names must start with 'project') and it
+immediately shows up in `list_projects()`; `list_memory`/`get_memory`/
 `set_memory` all take an optional `project` argument (defaulting to this
 repo's own `project-vault-mcp`) to operate on it.
 
@@ -72,6 +73,26 @@ def _safe_path(project: str, key: str) -> Path:
 def list_projects() -> list[str]:
     """List every project that has a vault (a subfolder under vaults/)."""
     return sorted(p.name for p in VAULTS_ROOT.iterdir() if p.is_dir())
+
+
+@mcp.tool()
+def create_project(project: str) -> str:
+    """Create a new, empty vault folder under vaults/ for a project.
+
+    Project names must start with 'project' (e.g. 'project-foo') and must
+    not already exist. Returns a confirmation message.
+    """
+    _safe_name(project, "project")
+    if not project.startswith("project"):
+        raise ToolError(
+            f"invalid project name {project!r}: project names must start "
+            f"with 'project'"
+        )
+    project_dir = VAULTS_ROOT / project
+    if project_dir.exists():
+        raise ToolError(f"project {project!r} already exists")
+    project_dir.mkdir(parents=True)
+    return f"created project '{project}' (vaults/{project}/)"
 
 
 @mcp.tool()
