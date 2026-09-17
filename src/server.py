@@ -21,8 +21,14 @@ outside its own memory store.
 Projects are just subfolders of `vaults/` — nothing to register. Call
 `create_project("project1")` (names must start with 'project') and it
 immediately shows up in `list_projects()`; `list_memory`/`get_memory`/
-`set_memory` all take an optional `project` argument (defaulting to this
-repo's own `project-vault-mcp`) to operate on it.
+`set_memory` all take an optional `project` argument to operate on it.
+
+That default is inferred from the server's cwd at launch, not hardcoded:
+launch it from inside `~/workspace/project1/` and calls default to
+`project1`'s vault; launch it from anywhere without a matching vault
+(including this repo itself) and it falls back to the hub project,
+`project-vault-mcp`, where cross-project reads make sense. See
+`_infer_default_project()`.
 
 Run it directly for a quick manual check:
     python src/server.py
@@ -40,7 +46,28 @@ from mcp.server.mcpserver.exceptions import ToolError
 VAULTS_ROOT = Path(__file__).parent.parent / "vaults"
 VAULTS_ROOT.mkdir(exist_ok=True)
 
-DEFAULT_PROJECT = "project-vault-mcp"
+HUB_PROJECT = "project-vault-mcp"
+
+
+def _infer_default_project() -> str:
+    """Default project is inferred from the directory the server is
+    launched from (its cwd), not hardcoded — this is what gives each
+    project its own scope without asking the AI to name it every time.
+
+    Launch the server from inside `~/workspace/project-foo/` and its
+    memory calls default to `project-foo`'s vault. Launch it from
+    anywhere without a matching vault (e.g. this repo itself) and it
+    falls back to the hub project, `project-vault-mcp`, where
+    cross-project reads via list_projects()/list_memory(project=...)
+    make sense.
+    """
+    cwd_name = Path.cwd().name
+    if (VAULTS_ROOT / cwd_name).is_dir():
+        return cwd_name
+    return HUB_PROJECT
+
+
+DEFAULT_PROJECT = _infer_default_project()
 
 mcp = MCPServer("project-vault")
 
@@ -97,8 +124,9 @@ def create_project(project: str) -> str:
 
 @mcp.tool()
 def list_memory(project: str = DEFAULT_PROJECT) -> list[str]:
-    """List the memory keys for a project (defaults to project-vault-mcp's
-    own memory). Call list_projects() first if unsure what projects exist.
+    """List the memory keys for a project (defaults to the project inferred
+    from where this server was launched — see DEFAULT_PROJECT). Call
+    list_projects() first if unsure what projects exist.
     """
     return sorted(p.stem for p in _project_dir(project).glob("*.md"))
 
@@ -106,7 +134,8 @@ def list_memory(project: str = DEFAULT_PROJECT) -> list[str]:
 @mcp.tool()
 def get_memory(key: str, project: str = DEFAULT_PROJECT) -> str:
     """Read one memory file by key for a project (filename without the .md
-    extension; project defaults to project-vault-mcp's own memory).
+    extension; project defaults to the one inferred from where this server
+    was launched — see DEFAULT_PROJECT).
 
     Returns its full contents, or an explanatory message if it doesn't
     exist yet — callers should treat a missing key as "nothing stored
@@ -121,8 +150,9 @@ def get_memory(key: str, project: str = DEFAULT_PROJECT) -> str:
 @mcp.tool()
 def set_memory(key: str, content: str, project: str = DEFAULT_PROJECT) -> str:
     """Write (create or overwrite) one memory file by key for a project
-    (defaults to project-vault-mcp's own memory). The project's vault
-    folder must already exist — this does not create new projects.
+    (defaults to the project inferred from where this server was launched
+    — see DEFAULT_PROJECT). The project's vault folder must already
+    exist — this does not create new projects (use create_project()).
 
     This is a full overwrite, not an append or patch — callers should send
     the complete content they want the file to contain.
