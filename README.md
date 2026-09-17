@@ -29,6 +29,24 @@ disabled by default here (see `CLAUDE.md`) — the devcontainer is already the
 isolation boundary, and its sandbox can't nest inside an unprivileged
 container anyway.
 
+## Web chat UI
+
+A second, independent MCP client — a minimal browser chat UI — lives in
+`web/`. It talks to the Anthropic API directly (not through Claude Code)
+and reaches `src/server.py` over MCP the same way Claude Code does,
+proving the vault isn't tied to any one client.
+
+1. Set your API key (typed directly into your shell, never committed):
+   `export ANTHROPIC_API_KEY=sk-...` or put it in `web/backend/.env`
+   (`ANTHROPIC_API_KEY=sk-...` — `.env` is gitignored).
+2. From the repo root: `uvicorn web.backend.app:app --reload --port 8000`
+3. Open the forwarded `localhost:8000` in a browser and chat — it can call
+   `list_memory`/`get_memory`/`set_memory` on your vault just like Claude
+   Code can.
+
+Conversation state is in-memory and single-session — v0, same spirit as
+`src/server.py`: prove the plumbing first.
+
 ## Status
 
 Early experiment — see the checklist in `CLAUDE.md`.

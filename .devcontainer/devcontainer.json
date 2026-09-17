@@ -11,6 +11,7 @@
     "ghcr.io/devcontainers/features/github-cli:1": {}
   },
   "remoteUser": "dev",
+  "forwardPorts": [8000],
   "workspaceMount": "source=${localWorkspaceFolder},target=/home/dev/workspace/project-vault-mcp,type=bind,consistency=cached",
   "workspaceFolder": "/home/dev/workspace/project-vault-mcp",
   "containerEnv": {

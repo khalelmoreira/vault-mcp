@@ -10,6 +10,12 @@ node_modules/
 # Editor / OS noise
 .DS_Store
 
+# API keys for web/backend — never committed
+.env
+
+# Personal Claude Code permission overrides, not shared with the team
+.claude/settings.local.json
+
 # The vault is the whole point of this project (your actual project memory).
 # Decide deliberately whether you want it in git history:
 #   - keep it tracked (comment the line below) if you want versioned memory

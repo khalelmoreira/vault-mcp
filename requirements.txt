@@ -3,3 +3,10 @@
 # Pinned >=2.0: in mcp 2.x the server class is MCPServer (mcp.server.mcpserver),
 # replacing the older FastMCP name/import path from 1.x tutorials you may find online.
 mcp[cli]>=2.0.0
+
+# web/backend — a second, independent MCP client: a small chat UI that
+# talks to the Anthropic API directly and to src/server.py over MCP.
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+anthropic>=0.40.0
+python-dotenv>=1.0.0

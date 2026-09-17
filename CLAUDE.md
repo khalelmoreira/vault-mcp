@@ -38,10 +38,12 @@ chat client (any MCP-capable AI) --MCP--> src/server.py --reads/writes--> vault/
 ```
 .devcontainer/devcontainer.json   dev environment: Python + Node + gh CLI, non-root "dev" user, single workspace path
 Dockerfile                        Python base image, creates the "dev" user, server dependencies
-requirements.txt                  mcp[cli] — the official MCP Python SDK
+requirements.txt                  mcp[cli], fastapi/uvicorn/anthropic for web/
 .vscode/                          editor settings + recommended extensions
 src/server.py                     the MCP server
 vault/                            the actual memory files (gitignored by default — see .gitignore)
+web/backend/app.py                second MCP client: browser chat UI backend (Anthropic API + MCP stdio client)
+web/frontend/index.html           plain HTML/JS chat page, no build step
 ```
 
 Inside the container, the repo lives at `/home/dev/workspace/project-vault-mcp`
@@ -86,7 +88,8 @@ claude mcp add project-vault -- python src/server.py
 - [x] Claude Code's internal sandbox disabled (was causing Bash commands to
       fail — bubblewrap can't nest inside an unprivileged container)
 - [x] Minimal MCP server: list/get/set over local .md files
-- [ ] Actually exercised end-to-end from a real chat session
+- [x] Actually exercised end-to-end from a real chat session (2026-09-16,
+      via Claude Code: list_memory/get_memory/set_memory all confirmed)
 - [ ] Decide: does this need a second (filtering/summarizing) LLM in front
       of the vault, or is thin pass-through enough?
 - [ ] Decide on write semantics if a second LLM is added (does the main
@@ -95,6 +98,8 @@ claude mcp add project-vault -- python src/server.py
 - [ ] Vault format conventions — right now it's just YAML frontmatter +
       bullet lines; align with whatever tagging convention (e.g. `[stated]`)
       turns out to matter once there's real content to manage.
+- [x] Second MCP client (browser chat UI in `web/`, calling the Anthropic
+      API directly) proves the vault isn't Claude-Code-specific
 
 ## Notes for whoever (human or AI) picks this up next
 
