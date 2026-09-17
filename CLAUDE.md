@@ -27,26 +27,20 @@ chat client (any MCP-capable AI) --MCP--> src/server.py --reads/writes--> vaults
   frontmatter block (see `vaults/project-vault-mcp/example.md`).
 - `src/server.py` — one long-running stdio MCP server exposing
   `list_projects`, `create_project`, `list_memory`, `get_memory`,
-  `set_memory`. `list_memory`/`get_memory`/`set_memory` all take an
-  optional `project` argument, defaulting to whichever project vault
-  matches the directory the server was launched from (its cwd) —
-  launch it from inside `~/workspace/project-foo/` and calls default
-  to `project-foo`'s vault, with no matching vault (including this
-  repo itself) it falls back to the hub project, `project-vault-mcp`.
-  This is what gives each project its own scope without asking the AI
-  to name it every time; see `_infer_default_project()`.
-  `create_project` makes a new, empty `vaults/<project>/` folder on
-  request; project names must start with `project` (e.g. `project-foo`).
-  No filtering or summarizing — a thin, honest pass-through. That's
-  intentional for v0: prove the plumbing before adding intelligence in
-  front of it.
-- Memory flow is meant to be one-way in spirit, not enforced by the
-  server: general "about the user" facts inform whatever project vault
-  is in scope, but a session scoped to one project shouldn't read or
-  write another project's vault, or the hub's, unless the user is
-  explicitly at the hub level and asks for it. This is an instruction-
-  level rule for now (see the AI-facing guidance in this file), not a
-  server-side restriction — easy to harden later if it leaks.
+  `set_memory`. The project is inferred from the directory the server
+  was launched from (its cwd) — launch it from inside
+  `~/workspace/project-foo/` and it's SCOPED to `project-foo`'s vault;
+  with no matching vault (including this repo itself) it's the hub,
+  `project-vault-mcp`. See `_infer_default_project()`.
+  Isolation is enforced server-side, not just a default: a scoped
+  instance's `list_memory`/`get_memory`/`set_memory` reject any
+  `project` argument other than its own, `list_projects()` returns only
+  its own project, and `create_project` is unavailable — start a
+  session from the hub for cross-project access. See `SCOPED` /
+  `_enforce_scope()`.
+  No filtering or summarizing — a thin, honest pass-through otherwise.
+  That's intentional for v0: prove the plumbing before adding
+  intelligence in front of it.
 - No second LLM in front of the vault yet — see open questions below.
 
 ## Repo layout
