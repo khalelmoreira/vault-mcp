@@ -13,8 +13,7 @@ python src/server.py`).
 ## Workspace path
 
 `workspaceMount`/`workspaceFolder` pin the repo to
-`/home/dev/workspace/project-vault-mcp` explicitly, so VS Code's default
-(`/workspaces/<name>`) doesn't create a second, confusing path.
+`/home/dev/workspace/project-vault-mcp`.
 
 ## Persistence
 
@@ -27,10 +26,9 @@ Two named volumes survive rebuilds:
 
 ## Sandbox
 
-Claude Code's own internal sandbox (bubblewrap, Linux) is disabled via
-`postCreateCommand` writing `~/.claude/settings.json` — it can't nest a
-mount namespace inside this already-unprivileged container, so Bash
-commands would otherwise fail. The devcontainer itself is the isolation
+Claude Code's own per-command sandbox (`bubblewrap`) can't nest inside an
+already-unprivileged devcontainer, so `postCreateCommand` disables it via
+`~/.claude/settings.json`. The devcontainer itself is the isolation
 boundary.
 
 ## Ports

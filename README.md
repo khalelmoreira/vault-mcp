@@ -11,14 +11,14 @@ built-in memory. See `CLAUDE.md` for the full rationale and architecture.
    exposing `list_memory`, `get_memory`, `set_memory`.
 3. `vault/` is the actual memory. Edit it directly, or let the tools do it.
 
-Claude Code and `gh` auth persist across rebuilds via named volumes.
+Claude Code and `gh` auth persist across rebuilds via named volumes, see `CONTAINER.md`.
 
 ## Web chat UI
 
 A second, independent MCP client in `web/` — talks to the Anthropic API
 directly and reaches `src/server.py` over MCP, same as Claude Code.
 
-1. Set `ANTHROPIC_API_KEY` (env var or `web/backend/.env`, gitignored).
+1. `cp web/backend/.env.example web/backend/.env` and fill in your key.
 2. `uvicorn web.backend.app:app --reload --port 8000`
 3. Open `localhost:8000` and chat.
 
