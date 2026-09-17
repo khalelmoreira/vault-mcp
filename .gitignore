@@ -16,10 +16,8 @@ node_modules/
 # Personal Claude Code permission overrides, not shared with the team
 .claude/settings.local.json
 
-# The vault is the whole point of this project (your actual project memory).
-# Decide deliberately whether you want it in git history:
-#   - keep it tracked (comment the line below) if you want versioned memory
-#   - ignore the content but keep the folder (current default) if it's
-#     meant to stay local/private per machine
-vault/*.md
-!vault/example.md
+# Vaults are the whole point of this project (real project memory for every
+# project registered against this server). Ignore content by default, keep
+# this repo's own example.md tracked as a sample of the format.
+vaults/*/*.md
+!vaults/project-vault-mcp/example.md

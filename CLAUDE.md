@@ -16,16 +16,24 @@ format is Anthropic-specific.
 ## Architecture (v0)
 
 ```
-chat client (any MCP-capable AI) --MCP--> src/server.py --reads/writes--> vault/*.md
+chat client (any MCP-capable AI) --MCP--> src/server.py --reads/writes--> vaults/<project>/*.md
 ```
 
-- `vault/` — the actual memory. Plain Markdown files, one per key, with a
-  small YAML frontmatter block (see `vault/example.md`).
-- `src/server.py` — a stdio MCP server exposing `list_memory`, `get_memory`,
-  `set_memory`. No filtering or summarizing — a thin, honest pass-through.
-  That's intentional for v0: prove the plumbing before adding intelligence
-  in front of it.
+- `vaults/<project>/` — the actual memory, centralized in this repo. One
+  subfolder per project (this repo's own memory lives in
+  `vaults/project-vault-mcp/`, no special-casing). Projects are just
+  folders — create `vaults/project1/` and it's immediately usable, nothing
+  to register. Plain Markdown files, one per key, with a small YAML
+  frontmatter block (see `vaults/project-vault-mcp/example.md`).
+- `src/server.py` — one long-running stdio MCP server exposing
+  `list_projects`, `list_memory`, `get_memory`, `set_memory`.
+  `list_memory`/`get_memory`/`set_memory` all take an optional `project`
+  argument, defaulting to `project-vault-mcp` itself. No filtering or
+  summarizing — a thin, honest pass-through. That's intentional for v0:
+  prove the plumbing before adding intelligence in front of it.
 - No second LLM in front of the vault yet — see open questions below.
+- No tool yet to create a new project's folder on request — for now,
+  `mkdir vaults/<project>/` yourself. Planned next step.
 
 ## Repo layout
 
@@ -34,7 +42,7 @@ chat client (any MCP-capable AI) --MCP--> src/server.py --reads/writes--> vault/
 Dockerfile                        Python base image, server dependencies
 requirements.txt                  mcp[cli], fastapi/uvicorn/anthropic for web/
 src/server.py                     the MCP server
-vault/                            the memory files (gitignored — see .gitignore)
+vaults/<project>/                 memory per project (gitignored — see .gitignore)
 web/backend/app.py                second MCP client: browser chat UI backend
 web/frontend/index.html           plain HTML/JS chat page, no build step
 ```
