@@ -13,6 +13,9 @@ node_modules/
 # API keys for web/backend — never committed
 .env
 
+# Local audit trail for src/gatekeeper.py — runtime state, not source
+gatekeeper_audit.log
+
 # Personal Claude Code permission overrides, not shared with the team
 .claude/settings.local.json
 

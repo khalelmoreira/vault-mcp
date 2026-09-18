@@ -10,3 +10,8 @@ fastapi>=0.115.0
 uvicorn[standard]>=0.32.0
 anthropic>=0.40.0
 python-dotenv>=1.0.0
+
+# src/gatekeeper.py — policy-gated proxy in front of src/server.py.
+# Reuses anthropic/python-dotenv above; only new dependency is pyyaml for
+# reading policy.yaml.
+pyyaml>=6.0

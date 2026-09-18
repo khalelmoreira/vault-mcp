@@ -1,0 +1,17 @@
+# Deterministic access policy for src/gatekeeper.py — checked in code
+# before any vault access or LLM call. Default-deny: a project not listed
+# here falls back to the `default` block below.
+projects:
+  project-vault-mcp:
+    read: allow
+    write: allow
+  project-1:
+    read: allow
+    write: deny
+  project-test:
+    read: deny
+    write: deny
+
+default:
+  read: deny
+  write: deny
